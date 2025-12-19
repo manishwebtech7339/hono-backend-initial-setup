@@ -1,0 +1,1 @@
+ALTER TABLE "users-otp-validate" RENAME COLUMN "password" TO "otp";
