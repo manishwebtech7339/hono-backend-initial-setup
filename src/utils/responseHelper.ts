@@ -32,6 +32,14 @@ type ErrorResponse<T = unknown> = {
   error?: T;
 };
 
+export type PaginationDataResponseType<T> = {
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalCount: number;
+  data: T;
+};
+
 export const successResponse = <T>({
   c,
   message = "",
@@ -70,4 +78,25 @@ export const errorResponse = <T>({
   };
   c.status(statusCode as StatusCode);
   return c.json(response);
+};
+
+export const paginationDataMaker = <T>({
+  page = 1,
+  pageSize = 20,
+  totalCount = 0,
+  data,
+}: {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  data: T;
+}): PaginationDataResponseType<T> => {
+  const calculatePages = Math.ceil(totalCount / pageSize) || 1;
+  return {
+    page,
+    pageSize: pageSize,
+    totalPages: calculatePages,
+    totalCount: calculatePages,
+    data: data ?? ([] as T),
+  };
 };

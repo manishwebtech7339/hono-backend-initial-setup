@@ -14,14 +14,19 @@ const authMiddleware = createMiddleware(async (c, next) => {
     .where(eq(usersDBTable.id, userPayload.id));
   const userData = checkUser?.[0];
   if (!userData?.id) {
-    return errorResponse(c, MESSAGES.BAD_REQUEST, 404, {
-      message: "UNAUTHORIZED",
+    return errorResponse({
+      c,
+      message: MESSAGES.UNAUTHORIZED,
+      statusCode: 401,
+      error: {
+        message: "User not found",
+      },
     });
   }
 
   // Set user data in request header
   c.set("user", userData);
-  next();
+  await next();
 });
 
 export default authMiddleware;

@@ -38,7 +38,7 @@ app.use(
 // Routes
 app.get("/", (c) => c.json({ test: "Running project - Hono-js Learn" }));
 app.route("/auth", authRoutes);
-app.route("/post", postRoutes);
+app.route("/posts", postRoutes);
 app.route("/users", userRoutes);
 
 // Handle uncaught errors

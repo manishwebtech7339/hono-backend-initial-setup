@@ -134,16 +134,22 @@ authRoutes.post("/sign-in", async (c) => {
     });
   }
 
+  // Create user token
+  const tokenPayload = {
+    id: checkUser.id,
+    name: checkUser.name,
+    age: checkUser.age,
+    email: checkUser.email,
+  };
+  const token = await sign(tokenPayload, envVariables.JWT_SECRET!);
+
   // --
   return successResponse({
     c,
     message: MESSAGES.FETCHED,
     data: {
-      id: checkUser.id,
-      name: checkUser.name,
-      age: checkUser.age,
-      email: checkUser.email,
-      isVerified: checkUser.isVerified,
+      user: tokenPayload,
+      token,
     },
     statusCode: 200,
   });
@@ -152,6 +158,7 @@ authRoutes.post("/sign-in", async (c) => {
 // Send verify account otp
 authRoutes.post("/send-verify-user-otp", async (c) => {
   const reqData = await c.req.json();
+
   // Validate
   const payload = z.object({ email: z.string() }).parse(reqData);
 

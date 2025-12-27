@@ -5,7 +5,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 // -------------------- TABLES --------------------
 // ---- Users ----
@@ -43,10 +43,30 @@ export const usersOtpVerifyDBTable = pgTable("users-otp-validate", {
   otp: text("otp").notNull(),
 });
 
+// ---- Posts ----
+export const postDBTable = pgTable("posts", {
+  id: text("id")
+    .primaryKey()
+    .$default(() => crypto.randomUUID()),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+
+  userId: text("user_id").references(() => usersDBTable.id),
+  title: text("title").notNull().unique(),
+  content: text("content").notNull(),
+});
 // -------------------- RELATIONS --------------------
 
 // -------------------- ZOD Schemas --------------------
 export const signUpUserDBSchema = createInsertSchema(usersDBTable);
+export const createPostDBSchema = createInsertSchema(postDBTable);
+export const updatePostDBSchema = createUpdateSchema(postDBTable);
 
 // -------------------- TYPE --------------------
 export type SignUpUserDBEntity = typeof usersDBTable.$inferInsert;
+export type CreatePostDBEntity = typeof postDBTable.$inferInsert;
+export type UpdatePostDBEntity = typeof postDBTable.$inferInsert;
